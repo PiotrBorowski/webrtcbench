@@ -26,7 +26,7 @@ export const init = async (
   conn.on("open", () => {
     console.log("connected");
   });
-  peer.on("call", async (call) => {
+  peer.on("call", (call) => {
     call.answer(localStream);
     call.on("stream", setRemoteStream);
   });
