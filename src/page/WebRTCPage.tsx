@@ -20,41 +20,44 @@ export const WebRTCPage = () => {
     setLocalStream(stream);
   };
 
-  useEffect(() => {
-    getMediaStream();
-    const peer = createPeer(localId);
-    setPeer(peer);
-  }, []);
-
   const connect = useCallback(async () => {
-    await init(peer, remoteId, localStream, (remoteStream) => {
+    const p = createPeer(localId);
+    setPeer(p);
+    await getMediaStream();
+    init(p, localStream, (remoteStream) => {
       remoteRef.current.srcObject = remoteStream;
     });
-  }, [remoteId, remoteRef, peer]);
+  }, [remoteRef, localStream, localId]);
 
-  const callToRemote = useCallback(async () => {
-    await call(peer, remoteId, localStream, (remoteStream) => {
+  const callToRemote = useCallback(() => {
+    call(peer, remoteId, localStream, (remoteStream) => {
       remoteRef.current.srcObject = remoteStream;
     });
-  }, [peer, remoteId, remoteRef]);
+  }, [peer, remoteId, remoteRef, localStream]);
 
   return (
-    <div style={{ display: "flex", flex: 1, flexDirection: "row" }}>
-      <span>name</span>
-      <input
-        style={{ height: 50 }}
-        onChange={(e) => setLocalId(e.target.value)}
-        value={localId}
-      />
+    <div style={{ display: "flex", flex: 1 }}>
+      <div
+        style={{ display: "flex", flexDirection: "column", marginRight: 20 }}
+      >
+        <input
+          placeholder="local"
+          style={{ height: 50 }}
+          onChange={(e) => setLocalId(e.target.value)}
+          value={localId}
+        />
+        <input
+          placeholder="remote"
+          style={{ height: 50 }}
+          onChange={(e) => setRemoteId(e.target.value)}
+          value={remoteId}
+        />
+        <button onClick={connect}>Connect</button>
+        <button onClick={callToRemote}>Call</button>
+      </div>
+
       <VideoComponent title="local" ref={localRef} />
-      <span>name</span>
-      <input
-        style={{ height: 50 }}
-        onChange={(e) => setRemoteId(e.target.value)}
-        value={remoteId}
-      />
-      <button onClick={connect}>Connect</button>
-      <button onClick={callToRemote}>Call</button>
+
       <VideoComponent title="remote" ref={remoteRef} />
     </div>
   );
