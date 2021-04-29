@@ -1,4 +1,5 @@
 import Peer from "peerjs";
+import { transformSdp } from "./sdpTransport";
 
 export const getLocalMediaStream = async (displayMediaOptions: any) => {
   let captureStream = null;
@@ -32,7 +33,10 @@ export const init = (
     console.log(call.peerConnection, call.metadata);
     // const [transciever] = call.peerConnection.getTransceivers();
     const { codecs } = RTCRtpSender.getCapabilities("video");
+    const recCodecs = RTCRtpReceiver.getCapabilities("video").codecs;
     console.log("CODECS:", codecs);
+    console.log("CODECS rec:", recCodecs);
+
     // transciever.setCodecPreferences(codecs);
     call.answer(localStream);
     call.on("stream", (s) => {
@@ -53,7 +57,7 @@ export const call = (
   localStream: MediaStream,
   setRemoteStream: (s: MediaStream) => any
 ) => {
-  const call = peer.call(remoteId, localStream);
+  const call = peer.call(remoteId, localStream, { sdpTransform: transformSdp });
   console.log(call);
   call.on("stream", (s) => {
     console.log(s);
