@@ -14,7 +14,7 @@ export const VideoComponent = React.forwardRef(
       <video
         crossOrigin="anonymous"
         controls
-        style={{ width: 500, height: 300 }}
+        style={{ width: 1000, height: 700 }}
         autoPlay
         ref={ref}
       />

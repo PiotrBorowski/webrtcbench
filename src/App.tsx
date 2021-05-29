@@ -2,6 +2,7 @@ import React, { useRef, useEffect } from "react";
 import "./App.css";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import { WebRTCPage } from "./page/WebRTCPage";
+import { WebRTCStaticVideoPage } from "./page/WebRTCStaticVideoPage";
 
 function App() {
   // const videoRefRef = useRef<HTMLVideoElement>(null);
@@ -51,10 +52,14 @@ function App() {
           <li>
             <Link to="/webrtc">WebRTC</Link>
           </li>
+          <li>
+            <Link to="/webrtcStatic">WebRTC Static Video</Link>
+          </li>
         </ul>
 
         <Switch>
           <Route path="/webrtc" component={WebRTCPage} />
+          <Route path="/webrtcStatic" component={WebRTCStaticVideoPage} />
         </Switch>
       </div>
     </Router>
