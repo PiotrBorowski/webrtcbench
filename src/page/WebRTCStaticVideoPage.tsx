@@ -9,15 +9,17 @@ export const WebRTCStaticVideoPage = () => {
   const [localId, setLocalId] = useState("");
   const [remoteId, setRemoteId] = useState("");
   const [peer, setPeer] = useState(null);
-  const [localStream, setLocalStream] = useState();
+  const [localStream, setLocalStream] = useState(null);
+
+  useEffect(() => {
+    localRef.current.src = "http://localhost:3000/testscreen.mp4";
+  }, []);
 
   const getMediaStream = async () => {
-    // const stream = await getLocalMediaStream({
-    //   audio: true,
-    //   video: true,
-    // });
-    localRef.current.src = "http://localhost:3000/testscreen.mp4";
-    const stream = localRef.current.captureStream();
+    const stream: MediaStream = localRef.current.captureStream(60);
+    await stream.getVideoTracks()[0].applyConstraints({ frameRate: 60 });
+    console.log("settings", stream.getVideoTracks()[0].getCapabilities());
+
     setLocalStream(stream);
   };
 

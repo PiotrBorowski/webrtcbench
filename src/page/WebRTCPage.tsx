@@ -1,6 +1,12 @@
 import react, { useCallback, useEffect, useRef, useState } from "react";
 import { VideoComponent } from "../components/VideoComponent";
-import { call, createPeer, getLocalMediaStream, init } from "../services/peer";
+import {
+  call,
+  createPeer,
+  getCamera,
+  getLocalMediaStream,
+  init,
+} from "../services/peer";
 
 export const WebRTCPage = () => {
   const remoteRef = useRef(null);
@@ -9,14 +15,27 @@ export const WebRTCPage = () => {
   const [localId, setLocalId] = useState("");
   const [remoteId, setRemoteId] = useState("");
   const [peer, setPeer] = useState(null);
-  const [localStream, setLocalStream] = useState();
+  const [localStream, setLocalStream] = useState(null);
 
   const getMediaStream = async () => {
-    const stream = await getLocalMediaStream({
+    const stream: MediaStream = await getCamera({
       audio: true,
-      video: true,
+      video: {
+        height: 1080,
+        width: 720,
+        framerate: 60,
+      },
     });
+    await stream
+      .getVideoTracks()[0]
+      .applyConstraints({ frameRate: 60, height: 720, width: 1080 });
     localRef.current.srcObject = stream;
+
+    console.log(
+      stream.getVideoTracks()[0].getSettings(),
+      stream.getVideoTracks()[0].getCapabilities()
+    );
+
     setLocalStream(stream);
   };
 

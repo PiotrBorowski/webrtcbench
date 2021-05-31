@@ -14,6 +14,19 @@ export const getLocalMediaStream = async (displayMediaOptions: any) => {
   return captureStream;
 };
 
+export const getCamera = async (displayMediaOptions: any) => {
+  let captureStream = null;
+
+  try {
+    captureStream = await (navigator.mediaDevices as any).getUserMedia(
+      displayMediaOptions
+    );
+  } catch (err) {
+    console.error("Error: " + err);
+  }
+  return captureStream;
+};
+
 export const createPeer = (id: string) =>
   new Peer(id, { host: "localhost", port: 9000, path: "webrtc" });
 
@@ -30,6 +43,11 @@ export const init = (
     console.log(c.peer, c.peerConnection);
   });
   peer.on("call", (call) => {
+    call.on("stream", (s) => {
+      console.log("stream", s);
+      setRemoteStream(s);
+    });
+
     console.log(call.peerConnection, call.metadata);
     // const [transciever] = call.peerConnection.getTransceivers();
     const { codecs } = RTCRtpSender.getCapabilities("video");
@@ -39,10 +57,6 @@ export const init = (
 
     // transciever.setCodecPreferences(codecs);
     call.answer(localStream);
-    call.on("stream", (s) => {
-      console.log("stream", s);
-      setRemoteStream(s);
-    });
   });
   peer.on("disconnected", function () {
     console.log("Connection lost. Please reconnect");
